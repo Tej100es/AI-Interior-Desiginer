@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redesigned Room</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .comparison-container {
+  display: flex;
+  justify-content: center; /* Center the two boxes */
+  gap: 40px; /* Space between the two boxes */
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.image-container {
+  width: 25%; /* Each box takes up nearly half the container */
+  min-width: 200px; /* Minimum width for each box */
+  padding: 15px;
+  background-color: #1e1e1e; /* Dark background for boxes */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.room-image {
+  width: 100%;
+  height: auto;
+  max-height: 500px; /* Increased image size */
+  border-radius: 8px;
+  object-fit: cover; /* Ensures images fill their containers */
+}
+
+.image-container h3 {
+  color: #00acc1;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+  
+   
+
+    #description {
+      background-color: #1e1e1e;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    #description h3 {
+      margin-top: 0;
+      color: #00acc1;
+      font-size: 24px;
+    }
+
+    #designDescription {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #dcdcdc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Room Redesign Comparison</h1>
+
+  <div class="comparison-container">
+    <div class="image-container">
+      <h3>Original Room</h3>
+      <img id="originalImage" class="room-image" src="" alt="Original Design">
+    </div>
+    <div class="image-container">
+      <h3>Redesigned Room</h3>
+      <img id="generatedImage" class="room-image" src="" alt="Generated Design">
+      <button id="editButton" style="margin-top: 10px; padding: 8px 16px; background-color:#00acc1; border:none; border-radius:4px; color:#fff; cursor:pointer; font-size:14px; display:none;">
+        Edit Design
+      </button>
+    </div>
+  </div>
+
+  <div id="description">
+    <h3>Design Description</h3>
+    <p id="designDescription"></p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const original = urlParams.get('original');
+      const redesigned = urlParams.get('redesigned');
+      const designDesc = urlParams.get('description');
+      const timestamp = urlParams.get('t') || new Date().getTime();
+
+      const originalImage = document.getElementById('originalImage');
+      const generatedImage = document.getElementById('generatedImage');
+      const designDescription = document.getElementById('designDescription');
+
+      if (original) {
+        originalImage.src = `http://localhost:5000/uploads/${original}?t=${timestamp}`;
+        originalImage.onerror = () => {
+          originalImage.src = '';
+          originalImage.alt = 'Original image not available';
+        };
+      }
+
+      if (redesigned) {
+        generatedImage.src = `http://localhost:5000/generated/${redesigned}?t=${timestamp}`;
+        generatedImage.onerror = () => {
+          generatedImage.src = '';
+          generatedImage.alt = 'Generated image not available';
+          alert('Failed to load the generated image. Please try again.');
+        };
+      }
+
+      if (designDesc) {
+        designDescription.textContent = decodeURIComponent(designDesc);
+      } else {
+        designDescription.textContent = "No description available.";
+      }
+     
+    const editButton = document.getElementById('editButton');
+
+if (redesigned) {
+  // Show the Edit button only if a redesigned image exists
+  editButton.style.display = 'inline-block';
+  editButton.onclick = () => {
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = `/edit.html?redesigned=${encodeURIComponent(params.get('redesigned'))}&original=${encodeURIComponent(params.get('original'))}`;
+};
+}
+});
+  </script>
+</body>
+</html>

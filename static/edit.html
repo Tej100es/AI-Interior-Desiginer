@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Room Design</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #00acc1;
+    }
+    #redesignedRoomContainer {
+      margin-bottom: 30px;
+      border: 2px solid #00acc1;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,172,193,0.7);
+      max-width: 80vw;
+      width: 100%;
+      position: relative;
+    }
+    #redesignedRoomImage {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+    #controlPanel {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      max-width: 700px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    #roomContainer {
+      flex: 1;
+      position: relative;
+      border: 2px solid #00acc1;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,172,193,0.7);
+      cursor: crosshair;
+      max-height: 600px;
+      overflow: hidden;
+      max-width: 60vw;
+    }
+    #roomImage {
+      max-width: 100%;
+      border-radius: 10px;
+      display: block;
+      user-select: none;
+      pointer-events: auto;
+    }
+    #sofaContainer {
+      width: 280px;
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,172,193,0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #sofaPreview {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.85;
+      border: 2px solid #00acc1;
+    }
+    input[type="file"] {
+      width: 100%;
+      margin-bottom: 20px;
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      background-color: #272727;
+      color: #fff;
+      outline: none;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #00acc1;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      box-shadow: 0 6px 15px rgba(0,172,193,0.8);
+      transition: background-color 0.2s ease;
+    }
+    button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button:hover:not(:disabled) {
+      background-color: #008a9d;
+    }
+    #confirmPlacementBtn {
+      margin-top: 30px;
+    }
+    #sofaPreviewOverlay {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.75;
+      border-radius: 8px;
+      user-select: none;
+      z-index: 10;
+      display: none;
+      max-width: 200px;
+      max-height: 150px;
+      box-shadow: 0 4px 12px rgba(0,172,193,0.8);
+    }
+    .loading {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 172, 193, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #00acc1;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .error-message {
+      color: #ff6b6b;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="logo">🛋️ Interior Designer</div>
+
+  <div id="redesignedRoomContainer">
+    <img id="redesignedRoomImage" src="" alt="Redesigned Room" />
+    <div id="loadingOverlay" class="loading">
+      <div class="spinner"></div>
+      <p>Processing your changes...</p>
+    </div>
+  </div>
+
+  <div id="controlPanel">
+    <div id="roomContainer">
+      <img id="roomImage" src="" alt="Room for Placement" />
+      <img id="sofaPreviewOverlay" alt="Sofa Preview Overlay" />
+    </div>
+
+    <div id="sofaContainer">
+      <label for="sofaUpload">Upload Sofa/Object Image (PNG):</label>
+      <input type="file" id="sofaUpload" accept="image/png" />
+      <img id="sofaPreview" alt="Sofa Preview" />
+      <div id="errorMessage" class="error-message"></div>
+      <button id="placeSofaBtn" disabled>Place Sofa on Click</button>
+      <button id="confirmPlacementBtn" disabled>Confirm Placement</button>
+    </div>
+  </div>
+
+  <script>
+    const redesignedRoomImage = document.getElementById('redesignedRoomImage');
+    const roomImage = document.getElementById('roomImage');
+    const sofaUpload = document.getElementById('sofaUpload');
+    const sofaPreview = document.getElementById('sofaPreview');
+    const placeSofaBtn = document.getElementById('placeSofaBtn');
+    const confirmPlacementBtn = document.getElementById('confirmPlacementBtn');
+    const sofaPreviewOverlay = document.getElementById('sofaPreviewOverlay');
+    const errorMessage = document.getElementById('errorMessage');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    let sofaPosition = null;
+    let sofaFile = null;
+    let roomFilename = null;
+    let redesignedFilename = null;
+
+    // Load images from URL parameters
+    const params = new URLSearchParams(window.location.search);
+    redesignedFilename = params.get('redesigned');
+    roomFilename = params.get('original');
+
+    if (redesignedFilename) {
+      loadImage(redesignedRoomImage, `http://localhost:5000/generated/${redesignedFilename}`)
+        .then(() => {
+          roomImage.src = redesignedRoomImage.src;
+        })
+        .catch(err => {
+          console.error('Failed to load redesigned image:', err);
+          errorMessage.textContent = 'Failed to load redesigned image. Please try again.';
+        });
+    } else {
+      errorMessage.textContent = 'No redesigned image specified in URL';
+    }
+
+    // Helper function to load images with error handling
+    function loadImage(imgElement, src) {
+      return new Promise((resolve, reject) => {
+        imgElement.onload = () => resolve();
+        imgElement.onerror = () => reject(new Error('Failed to load image'));
+        imgElement.src = src;
+      });
+    }
+
+    sofaUpload.addEventListener('change', (e) => {
+      errorMessage.textContent = '';
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        
+        // Basic validation
+        if (!file.type.match('image.*')) {
+          errorMessage.textContent = 'Please select an image file';
+          return;
+        }
+
+        sofaFile = file;
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+          sofaPreview.src = event.target.result;
+          sofaPreview.style.display = 'block';
+
+          sofaPreviewOverlay.src = event.target.result;
+          sofaPreviewOverlay.style.display = 'none';
+
+          placeSofaBtn.disabled = false;
+          confirmPlacementBtn.disabled = true;
+          sofaPosition = null;
+        };
+        
+        reader.onerror = () => {
+          errorMessage.textContent = 'Error reading file';
+        };
+        
+        reader.readAsDataURL(file);
+      }
+    });
+
+    placeSofaBtn.onclick = () => {
+      if (!sofaFile) {
+        errorMessage.textContent = 'Please upload an image first';
+        return;
+      }
+      
+      sofaPreviewOverlay.style.display = 'block';
+      confirmPlacementBtn.disabled = true;
+      sofaPosition = null;
+      
+      // Update overlay size based on preview size
+      sofaPreviewOverlay.style.width = `${sofaPreview.width}px`;
+      sofaPreviewOverlay.style.height = `${sofaPreview.height}px`;
+    };
+
+    roomImage.addEventListener('click', (e) => {
+      if (!sofaFile || !sofaPreviewOverlay.style.display === 'block') return;
+
+      const containerRect = roomImage.getBoundingClientRect();
+      const imgRect = roomImage.getBoundingClientRect();
+
+      // Calculate click position relative to the image
+      const clickX = e.clientX - imgRect.left;
+      const clickY = e.clientY - imgRect.top;
+
+      // Position the overlay centered at the click point
+      sofaPreviewOverlay.style.left = `${clickX - sofaPreviewOverlay.width / 2}px`;
+      sofaPreviewOverlay.style.top = `${clickY - sofaPreviewOverlay.height / 2}px`;
+
+      // Calculate position in original image coordinates
+      const scaleX = roomImage.naturalWidth / roomImage.clientWidth;
+      const scaleY = roomImage.naturalHeight / roomImage.clientHeight;
+      
+      sofaPosition = { 
+        x: Math.floor(clickX * scaleX), 
+        y: Math.floor(clickY * scaleY)
+      };
+
+      confirmPlacementBtn.disabled = false;
+    });
+
+    confirmPlacementBtn.onclick = async () => {
+      if (!sofaPosition || !sofaFile) {
+        errorMessage.textContent = 'Please place the sofa on the image first';
+        return;
+      }
+
+      loadingOverlay.style.display = 'flex';
+      confirmPlacementBtn.disabled = true;
+      placeSofaBtn.disabled = true;
+
+      try {
+        const formData = new FormData();
+        formData.append('room', redesignedFilename);
+        formData.append('object', sofaFile);
+        formData.append('x', sofaPosition.x);
+        formData.append('y', sofaPosition.y);
+
+        const response = await fetch('http://localhost:5000/add-object', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Request failed');
+        }
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+          // Add cache busting parameter
+          const newSrc = `http://localhost:5000/generated/${data.generated_image}?t=${Date.now()}`;
+          
+          await loadImage(redesignedRoomImage, newSrc);
+          roomImage.src = newSrc;
+
+          // Reset UI
+          sofaPreview.style.display = 'none';
+          sofaPreviewOverlay.style.display = 'none';
+          sofaUpload.value = '';
+          sofaFile = null;
+          sofaPosition = null;
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        errorMessage.textContent = `Error: ${error.message}`;
+      } finally {
+        loadingOverlay.style.display = 'none';
+        confirmPlacementBtn.disabled = false;
+        placeSofaBtn.disabled = false;
+      }
+    };
+
+    // Handle image loading errors
+    roomImage.onerror = () => {
+      errorMessage.textContent = 'Failed to load room image';
+    };
+    
+    redesignedRoomImage.onerror = () => {
+      errorMessage.textContent = 'Failed to load redesigned room image';
+    };
+  </script>
+</body>
+</html>
