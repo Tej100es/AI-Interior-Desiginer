@@ -29,9 +29,9 @@ To help interior designers, homeowners, and architects visualize furniture arran
 
 ## ✨ Features
 
-- 🛋️ **AI-Powered Furnishing**: Automatically adds sofas, rugs, and basic decor to empty rooms.
-- 🧠 **Stable Diffusion Based**: Uses pretrained (or fine-tuned) diffusion models for high-quality image generation.
-- 📷 **Image-to-Image Translation**: Input an empty room → Output a beautifully furnished room.
+-  **AI-Powered Furnishing**: Automatically adds sofas, rugs, and basic decor to empty rooms.
+-  **Stable Diffusion Based**: Uses pretrained (or fine-tuned) diffusion models for high-quality image generation.
+-  **Image-to-Image Translation**: Input an empty room → Output a beautifully furnished room.
 ---
 
 ## 🛠 Tech Stack
