@@ -2,11 +2,11 @@
 
 This project transforms **empty room images** into **Furnished Images** using **Stable Diffusion**, acting like a virtual interior designer. It adds sofas, rugs, and essential furniture to visualize fully-furnished rooms from bare spaces.
  
-
+<p align="center">
 <small>Empty Room → Furnished Room</small>  
-<img src="uploads/upload_1746687400_istockphoto-1535511484-612x612.jpg" alt="Empty Room" width="300"/>
+<img src="uploads/upload_1746687400_istockphoto-1535511484-612x612.jpg" alt="Empty Room" width="300" style="margin-right: 20px;"/>
 <img src="generated/redesign_upload_1747472952_upload_1746687400_istockphoto-1535511484-612x612.jpg" alt="Furnished Room" width="300"/>
-
+</p>
 ---
 
 ## 🎯 Project Goal
