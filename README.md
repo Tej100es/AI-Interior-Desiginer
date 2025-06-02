@@ -1,18 +1,22 @@
 # 🏠 AI Interior Designer — Furnish Empty Rooms with AI
 ---
 This project transforms **empty room images** into **Furnished Images** using **Stable Diffusion**, acting like a virtual interior designer. It adds sofas, rugs, and essential furniture to visualize fully-furnished rooms from bare spaces.
- 
- 
-<p align="center">
-  <img src="uploads/upload_1746687400_istockphoto-1535511484-612x612.jpg" alt="Empty Room" width="300" style="margin-right: 20px;"/>
-  <span style="font-size: 30px; vertical-align: middle;">➡️</span>
-  <img src="generated/redesign_upload_1747472952_upload_1746687400_istockphoto-1535511484-612x612.jpg" alt="Furnished Room" width="300" style="margin-left: 20px;"/>
-</p>
+<table align="center">
+  <tr align="center">
+    <td>
+      <img src="uploads/upload_1746687400_istockphoto-1535511484-612x612.jpg" alt="Empty Room" width="300"/><br/>
+      <strong>Empty Room</strong>
+    </td>
+    <td style="font-size: 30px; vertical-align: middle;">
+      ➡️
+    </td>
+    <td>
+      <img src="generated/redesign_upload_1747472952_upload_1746687400_istockphoto-1535511484-612x612.jpg" alt="Furnished Room" width="300"/><br/>
+      <strong>Furnished Room</strong>
+    </td>
+  </tr>
+</table>
 
-<p align="center">
-  <strong>Empty Room</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  <strong>Furnished Room</strong>
-</p>
 
 ---
 
